@@ -1,0 +1,33 @@
+---
+- name: Docker Task 1
+  hosts: EC2_Ubuntu
+  become: yes
+
+
+  tasks:
+
+    - name: Update and upgrade apt packages
+      ansible.builtin.apt:
+       update_cache: yes
+       upgrade: full 
+
+    - name: Install Docker
+      apt:
+       name: docker.io
+       state: present
+       update_cache: yes
+
+    - name: Start Nginx container
+      community.docker.docker_container:
+       name: nginx
+       image: nginx:latest
+       state: started
+
+    - name: run Docker ps to Get list of running Docker containers
+      ansible.builtin.command: docker ps
+      register: docker_ps_output
+
+    - name: Print docker ps output
+      ansible.builtin.debug:
+        var: docker_ps_output.stdout_lines   
+        
